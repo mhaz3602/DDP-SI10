@@ -58,7 +58,8 @@ def konsultasi_gaya_rambut():
     # Tampilkan gambar untuk setiap gaya rambut yang disarankan
     for gaya in gaya_rambut:
         if gaya in model_gambar:
-            st.image(model_gambar[gaya], caption=gaya, use_column_width=True)
+            st.image(model_gambar[gaya], caption=gaya, width=150)  
+
 
     # FAQ
     st.write("### FAQ (Pertanyaan yang Sering Diajukan) 🤔")
