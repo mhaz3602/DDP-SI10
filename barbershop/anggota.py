@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import re  # Untuk validasi email
 
 # Kelas untuk Anggota
 class Anggota:
@@ -11,7 +12,8 @@ class Anggota:
         return f"Anggota: {self.nama} | Email: {self.email} 📧"
 
 # Riwayat anggota
-riwayat_anggota = []
+if "anggota_terdaftar" not in st.session_state:
+    st.session_state.anggota_terdaftar = []
 
 # Fungsi untuk sistem pendaftaran anggota
 def sistem_anggota():
@@ -21,13 +23,16 @@ def sistem_anggota():
     nama = st.text_input("Nama Lengkap ✍️")
     email = st.text_input("Email 📧")
 
+    # Validasi email menggunakan regex
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
     if st.button("Daftar Member 📝"):
-        if nama and email and email.endswith("@gmail.com"):  # Tambahan validasi email
-            anggota_baru = Anggota(nama, email)
-            riwayat_anggota.append({"Nama": nama, "Email": email})
+        if nama.strip() and email and re.match(email_regex, email):
+            anggota_baru = Anggota(nama.strip(), email.strip())
+            st.session_state.anggota_terdaftar.append({"Nama": nama.strip(), "Email": email.strip()})
             st.success(f"Selamat datang, {nama}! Anda telah terdaftar sebagai member. 🎉")
             st.write(anggota_baru.tampilkan_info())
-            st.balloons()  # Efek visual saat berhasil mendaftar 🎈
+            st.balloons()
 
             # Menampilkan reward untuk pendaftaran
             st.write("### Selamat! Anda Mendapatkan Reward 🏆:")
@@ -36,17 +41,17 @@ def sistem_anggota():
 
             # Menampilkan tabel riwayat anggota dengan nomor urut
             st.write("### Riwayat Anggota 📋")
-            if riwayat_anggota:
-                df = pd.DataFrame(riwayat_anggota)
+            if st.session_state.anggota_terdaftar:
+                df = pd.DataFrame(st.session_state.anggota_terdaftar)
                 df.index = df.index + 1  # Menambahkan nomor urut mulai dari 1 🔢
                 st.table(df)
         else:
-            if not nama:
+            if not nama.strip():
                 st.error("Silakan isi nama dengan benar ❗️")
             elif not email:
                 st.error("Silakan isi email dengan benar ❗️")
-            elif not email.endswith("@gmail.com"):
-                st.error("Format email harus diakhiri dengan '@gmail.com' ❗️")
+            elif not re.match(email_regex, email):
+                st.error("Format email tidak valid ❗️")
 
 # Menjalankan aplikasi
 if __name__ == "__main__":
