@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import re  # Untuk validasi email
 
+if "anggota_terdaftar" not in st.session_state:
+    st.session_state["anggota_terdaftar"] = []  
+
 # Kelas untuk Anggota
 class Anggota:
     def __init__(self, nama, email):
@@ -10,10 +13,6 @@ class Anggota:
 
     def tampilkan_info(self):
         return f"Anggota: {self.nama} | Email: {self.email} 📧"
-
-# Riwayat anggota
-if "anggota_terdaftar" not in st.session_state:
-    st.session_state.anggota_terdaftar = []
 
 # Fungsi untuk sistem pendaftaran anggota
 def sistem_anggota():
